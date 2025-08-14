@@ -1,0 +1,620 @@
+/* ====== Design system */
+:root{
+  --bg1:#0c1020; --bg2:#1a1f35; --accent:#9b7bff; --accent-2:#ff5ca1;
+  --panel:rgba(22,28,49,.52);
+  --stroke:rgba(255,255,255,.08);
+  --text:#eef2ff; --muted:#9aa4b2;
+  --shadow: 0 10px 30px rgba(0,0,0,.35);
+}
+
+:root[data-theme="light"]{
+  --bg1:#eef3ff; --bg2:#dfe7ff; --panel:rgba(255,255,255,.72);
+  --stroke:rgba(0,0,0,.08); --text:#0f172a; --muted:#55607a;
+  --accent:#5b6cff; --accent-2:#ff4d88;
+}
+
+*{box-sizing:border-box}
+html,body,#root{height:100%}
+body{
+  margin:0; font-family:Poppins, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  color:var(--text);
+  background:
+    radial-gradient(1200px 600px at 20% -10%, rgba(155,123,255,.35), transparent 50%),
+    radial-gradient(1000px 900px at 90% 10%, rgba(255,92,161,.25), transparent 50%),
+    linear-gradient(160deg, var(--bg1), var(--bg2));
+  background-attachment: fixed;
+}
+
+/* “estrellas” suaves */
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background-image:
+    radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,.35) 40%, transparent 41%),
+    radial-gradient(2px 2px at 60% 20%, rgba(255,255,255,.22) 40%, transparent 41%),
+    radial-gradient(2px 2px at 85% 45%, rgba(255,255,255,.25) 40%, transparent 41%),
+    radial-gradient(1.5px 1.5px at 45% 70%, rgba(255,255,255,.22) 40%, transparent 41%),
+    radial-gradient(1.5px 1.5px at 75% 85%, rgba(255,255,255,.18) 40%, transparent 41%);
+  filter: blur(.2px);
+}
+
+.app{max-width:1200px; margin:0 auto; padding:28px; position:relative; z-index:1}
+
+/* Topbar */
+.topbar{display:flex; align-items:center; justify-content:space-between; margin-bottom:16px}
+h1{font-size:36px; letter-spacing:.5px; margin:0; font-weight:700}
+.controls{display:flex; gap:10px}
+
+/* Pills + toggles */
+.btn, .search-bar button{
+  appearance:none; border:1px solid var(--stroke); background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+  color:var(--text); padding:10px 14px; border-radius:999px; cursor:pointer; box-shadow:var(--shadow);
+  transition: transform .08s ease, background .2s ease, border-color .2s ease;
+}
+.btn:hover, .search-bar button:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.18); }
+.btn-primary, .search-bar button:first-of-type{
+  background:
+    radial-gradient(120% 100% at 20% 0%, rgba(255,255,255,.18), transparent 55%),
+    linear-gradient(150deg, var(--accent), var(--accent-2));
+  border-color: transparent; color:white;
+}
+.unit-toggle{ display:flex; gap:8px; background:transparent }
+.unit-toggle .active{ filter: brightness(1.08) saturate(1.1); }
+
+/* Search */
+.search-bar{ display:flex; gap:10px; margin: 10px 0 18px }
+.search-bar input{
+  flex:1; padding:12px 14px; border-radius:14px; border:1px solid var(--stroke);
+  background:var(--panel); color:var(--text); backdrop-filter: blur(8px);
+}
+
+/* Layout */
+.grid-2{
+  display:grid; grid-template-columns: 1.1fr .9fr; gap:16px;
+}
+@media (max-width: 920px){ .grid-2{ grid-template-columns: 1fr; } }
+
+/* Cards “glass” */
+.card, .panel{
+  background:var(--panel); border:1px solid var(--stroke); border-radius:18px; padding:18px;
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow);
+}
+.card:hover{ border-color: rgba(255,255,255,.18); }
+
+/* Current */
+.current .head{ display:flex; align-items:flex-start; justify-content:space-between; }
+.current h2{ margin:0 0 4px; font-size:26px }
+.current .row{ display:flex; align-items:center; gap:14px; margin-top:8px }
+.current .temp{ font-size:84px; font-weight:700; line-height:.9; }
+.current .badge{
+  width:56px; height:56px; border-radius:50%;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.4), rgba(255,255,255,.05) 40%), linear-gradient(140deg, var(--accent), var(--accent-2));
+  display:grid; place-items:center; color:#fff; font-weight:700;
+}
+.current .meta{ display:flex; gap:20px; color:var(--muted); margin-top:10px; flex-wrap:wrap }
+
+/* Hourly */
+.hourly h3, .daily h3, .cities h3{ margin:0 0 12px }
+.scroller{ display:grid; grid-auto-flow:column; grid-auto-columns: minmax(84px, 1fr); gap:12px; overflow-x:auto; padding-bottom:4px }
+.hour{
+  background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+  border:1px solid var(--stroke); border-radius:14px; padding:12px 10px; text-align:center;
+}
+.hour .t{ font-weight:600 }
+
+/* Daily (5 días) */
+.daily .grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap:12px }
+.day{
+  border:1px solid var(--stroke); border-radius:14px; padding:12px;
+  background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+}
+.day .top{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px }
+.day .temps{ display:flex; gap:8px; font-weight:600 }
+.day .bar{
+  height:6px; border-radius:999px; background: rgba(255,255,255,.12);
+  position:relative; overflow:hidden;
+}
+.day .bar::after{
+  content:""; position:absolute; inset:0;
+  margin-left: calc(var(--from, 0) * 1%); width: calc((var(--to, 100) - var(--from, 0)) * 1%);
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  border-radius:999px;
+}
+
+/* Cities */
+.cities .grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap:12px }
+.cities .city{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:12px 14px; border-radius:16px; border:1px solid var(--stroke);
+  background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+  color:inherit; cursor:pointer; transition: transform .08s ease;
+}
+.cities .city:hover{ transform: translateY(-2px); }
+
+/* Footer */
+.footer{ color:var(--muted); text-align:center; padding:22px 0 }
+/* ---- Layout 2 columnas estable ---- */
+.layout{
+  display:grid;
+  grid-template-columns: minmax(0, 1fr) 380px; /* contenido | sidebar */
+  gap:16px;
+  align-items:start;
+}
+@media (max-width: 1100px){
+  .layout{ grid-template-columns: 1fr; }
+  .sidebar{ order: 2; }
+  .main{ order: 1; }
+}
+
+/* ---- Grupo °C / °F como “pill” ---- */
+.unit-toggle{
+  display:inline-flex;
+  padding:4px;
+  gap:6px;
+  border-radius:999px;
+  border:1px solid var(--stroke);
+  background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+  backdrop-filter: blur(8px);
+}
+.unit-toggle button{
+  border:0;
+  background:transparent;
+  color:var(--text);
+  padding:8px 12px;
+  border-radius:999px;
+  cursor:pointer;
+  transition:transform .08s ease, background .2s ease;
+}
+.unit-toggle button.active{
+  background: linear-gradient(150deg, var(--accent), var(--accent-2));
+  color:#fff;
+  transform: translateY(-1px);
+}
+
+/* ---- Botón de Modo claro/oscuro consistente ---- */
+.theme-toggle{
+  padding:8px 12px;
+  border-radius:999px;
+  border:1px solid var(--stroke);
+  background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+  color:var(--text);
+  cursor:pointer;
+  backdrop-filter: blur(8px);
+  transition: transform .08s ease, border-color .2s ease;
+}
+.theme-toggle:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.18); }
+
+/* ---- Cards: asegurá márgenes y coherencia ---- */
+.card, .panel{ margin-bottom:16px; }
+.search-bar{ margin: 8px 0 18px; }
+
+
+/* ==== PATCH: look limpio y compacto ==== */
+
+/* 1) Fondo sólido (sin degradé ni estrellas) */
+body{
+  background: #0f1424;              /* dark */
+}
+:root[data-theme="light"] body{
+  background: #f4f6fb;              /* light */
+}
+/* si tenías body::before con estrellas, lo ocultamos */
+body::before{ display:none !important; }
+
+/* 2) Contenedor más ancho y sin márgenes grandes */
+.app{ max-width: 1280px; padding: 20px; }
+
+/* 3) Layout 2 columnas balanceado y compacto */
+.layout{
+  display:grid;
+  grid-template-columns: 1.35fr 0.9fr;  /* más ancho el contenido principal */
+  gap: 12px;                             /* menos espacio entre columnas */
+  align-items:start;
+}
+@media (max-width: 1100px){
+  .layout{ grid-template-columns: 1fr; }
+}
+
+/* 4) Cards menos “pesadas” */
+.card, .panel{
+  border-radius: 16px;
+  padding: 14px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.25);
+  margin-bottom: 12px;
+  background: rgba(24, 30, 48, .85);              /* dark sólido */
+  border: 1px solid rgba(255,255,255,.06);
+}
+:root[data-theme="light"] .card,
+:root[data-theme="light"] .panel{
+  background: #fffffff2;
+  border-color: rgba(0,0,0,.06);
+  box-shadow: 0 6px 18px rgba(0,0,0,.10);
+}
+
+/* 5) Topbar y controles más prolijos */
+.topbar{ margin-bottom: 10px; }
+.controls{ gap: 8px; }
+.unit-toggle{ padding: 3px; gap: 4px; }
+.unit-toggle button{ padding: 6px 10px; }
+.theme-toggle{ padding: 6px 10px; }
+
+/* 6) Search compacto y sin “glow” */
+.search-bar{ margin: 8px 0 12px; }
+.search-bar input{ padding: 10px 12px; }
+
+/* 7) Current: reducimos tamaños y paddings */
+.current .temp{ font-size: 72px; }
+.current .row{ gap: 12px; }
+.current .meta{ gap: 14px; }
+
+/* 8) Hourly: pill chicas + scrollbar finita/invisible */
+.hourly .scroller{
+  gap: 10px;
+  padding-bottom: 2px;
+}
+.hour{
+  padding: 10px 8px;
+  border-radius: 12px;
+}
+
+/* Scrollbar del carrusel (webkit) */
+.hourly .scroller::-webkit-scrollbar{ height: 6px; }
+.hourly .scroller::-webkit-scrollbar-track{ background: transparent; }
+.hourly .scroller::-webkit-scrollbar-thumb{
+  background: rgba(255,255,255,.15);
+  border-radius: 999px;
+}
+/* En Firefox: barra casi invisible */
+.hourly .scroller{ scrollbar-color: rgba(255,255,255,.15) transparent; scrollbar-width: thin; }
+
+/* Si directamente NO querés barra, descomentá la línea siguiente */
+/* .hourly .scroller::-webkit-scrollbar{ display:none; } */
+
+/* 9) Daily: list items más delgados y sin barras demasiado largas */
+.daily .grid{ gap: 10px; }
+.day{ padding: 10px; border-radius: 12px; }
+.day .top{ margin-bottom: 8px; }
+.day .bar{ height: 5px; }
+.day .temps{ gap: 6px; }
+
+/* 10) Cities: cards más chicas para que llenen la columna y no quede hueco */
+.cities .grid{
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+}
+.cities .city{ padding: 10px 12px; border-radius: 12px; }
+
+/* 11) Tipografía un poco más compacta */
+h1{ font-size: 34px; }
+.current h2{ font-size: 24px; }
+.hour .t, .cities .t{ font-weight: 600; }
+
+/* 12) Borde y sombra suaves en light/dark */
+:root[data-theme="light"] .unit-toggle,
+:root[data-theme="light"] .theme-toggle{
+  border-color: rgba(0,0,0,.06);
+  background: #ffffffe6;
+}
+.unit-toggle, .theme-toggle{
+  border-color: rgba(255,255,255,.06);
+  background: rgba(255,255,255,.05);
+}
+.unit-toggle button.active{
+  background: #6a74ff; /* color pleno, sin degradé */
+}
+
+/* 13) Footer con menos aire */
+.footer{ padding: 16px 0; }
+
+.app {
+  max-width: 1280px;
+  padding: 36px 20px 20px; /* más margen arriba */
+}
+
+.topbar {
+  margin-bottom: 20px;
+}
+
+
+.extra h3 {
+  margin-bottom: 10px;
+}
+
+.extras-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 8px;
+}
+
+.extras-grid div {
+  background: rgba(255, 255, 255, 0.04);
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.extras-grid strong {
+  font-weight: 500;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+
+/* === Margen general más amplio === */
+.app {
+  max-width: 1280px;
+  padding: 50px 40px 30px; /* más aire arriba y laterales */
+}
+
+/* === Fondo sólido con leve sombra interna === */
+body {
+  background: #0e1324;
+}
+:root[data-theme="light"] body {
+  background: #f4f6fb;
+}
+body::before {
+  display: none !important;
+}
+
+/* === Título más grande y estilizado === */
+h1 {
+  font-size: 40px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  letter-spacing: 0.5px;
+}
+
+/* === Cards con sombras suaves y bordes redondeados === */
+.card, .panel {
+  border-radius: 18px;
+  padding: 18px;
+  margin-bottom: 18px;
+  background: rgba(24, 30, 48, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+}
+:root[data-theme="light"] .card,
+:root[data-theme="light"] .panel {
+  background: #fff;
+  border-color: rgba(0,0,0,0.08);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+
+/* === Layout más espacioso === */
+.layout {
+  display: grid;
+  grid-template-columns: 1.4fr 0.9fr;
+  gap: 20px;
+  align-items: start;
+}
+@media (max-width: 1100px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* === Clima actual: más impacto === */
+.current .temp {
+  font-size: 88px;
+  font-weight: 700;
+}
+.current .row {
+  gap: 16px;
+}
+.current .meta {
+  margin-top: 12px;
+  gap: 20px;
+  font-size: 1rem;
+}
+
+/* === Pronóstico 24 horas === */
+.hourly .scroller {
+  gap: 12px;
+  padding-bottom: 4px;
+}
+.hour {
+  padding: 12px 10px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+.hourly .scroller::-webkit-scrollbar {
+  height: 6px;
+}
+.hourly .scroller::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+}
+
+/* === Pronóstico 5 días === */
+.daily .grid {
+  gap: 14px;
+}
+.day {
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+.day .temps {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+/* === Otras ciudades: más compactas y con hover === */
+.cities .grid {
+  gap: 12px;
+}
+.cities .city {
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: transform 0.1s ease, background 0.2s ease;
+}
+.cities .city:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+/* === Footer centrado y con menos espacio === */
+.footer {
+  margin-top: 30px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1.3fr 0.7fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.layout > div {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* === 1) Columna derecha más ancha === */
+@media (min-width: 1100px){
+  .layout{
+    /* antes: 1.35fr 0.9fr */
+    grid-template-columns: 1.15fr 1fr; /* le damos más espacio a la derecha */
+  }
+  .sidebar{ min-width: 420px; } /* asegura ancho cómodo del panel de 5 días */
+}
+
+/* === 2) Motion & color (hover/focus) === */
+:root{
+  --hover-glow: 0 10px 26px rgba(155,123,255,.30), 0 2px 8px rgba(255,92,161,.18);
+  --press: translateY(1px) scale(0.995);
+}
+
+/* Cards generales */
+.card, .panel{
+  transition: transform .18s ease, box-shadow .22s ease, border-color .22s ease, background .22s ease;
+}
+.card:hover, .panel:hover{
+  transform: translateY(-4px);
+  box-shadow: var(--hover-glow);
+  border-color: rgba(255,255,255,.16);
+}
+
+/* Botones (incluye pills de °C/°F, Buscar, etc.) */
+.btn, .theme-toggle, .unit-toggle, .search-bar button{
+  transition: transform .12s ease, box-shadow .18s ease, background .22s ease, border-color .22s ease, filter .22s ease;
+}
+.btn:hover, .theme-toggle:hover, .unit-toggle:hover, .search-bar button:hover{
+  transform: translateY(-2px);
+  box-shadow: var(--hover-glow);
+}
+.btn:active, .theme-toggle:active, .unit-toggle:active, .search-bar button:active{
+  transform: var(--press);
+}
+.unit-toggle button{
+  transition: transform .12s ease, background .22s ease, color .22s ease;
+}
+.unit-toggle button:hover{ transform: translateY(-1px); filter: saturate(1.15) }
+.unit-toggle button.active{
+  box-shadow: 0 6px 18px rgba(106,116,255,.35);
+}
+
+/* Horas (24h) */
+.hour{
+  transition: transform .16s ease, background .22s ease, box-shadow .18s ease, border-color .22s ease;
+  cursor: default;
+}
+.hour:hover{
+  transform: translateY(-3px);
+  background: rgba(255,255,255,.07);
+  border-color: rgba(255,255,255,.16);
+  box-shadow: 0 8px 20px rgba(0,0,0,.28);
+}
+
+/* Días (5 días) */
+.day{
+  transition: transform .16s ease, background .22s ease, border-color .22s ease, box-shadow .18s ease;
+}
+.day:hover{
+  transform: translateY(-3px);
+  background: rgba(255,255,255,.07);
+  border-color: rgba(255,255,255,.16);
+  box-shadow: 0 8px 20px rgba(0,0,0,.28);
+}
+
+/* Barra de rango animada (5 días) */
+@keyframes loadbar {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+.day .bar{
+  transform-origin: left center;
+  animation: loadbar .6s ease-out;
+}
+
+/* Otras ciudades (cards clicables) */
+.cities .city{
+  transition: transform .16s ease, background .22s ease, border-color .22s ease, box-shadow .18s ease;
+}
+.cities .city:hover{
+  transform: translateY(-3px);
+  background: rgba(255,255,255,.08);
+  border-color: rgba(255,255,255,.16);
+  box-shadow: 0 8px 20px rgba(0,0,0,.28);
+}
+
+/* Icono del clima principal “flotando” suave */
+.current img{
+  animation: floatY 6s ease-in-out infinite;
+  will-change: transform;
+}
+@keyframes floatY{
+  0%{ transform: translateY(0) }
+  50%{ transform: translateY(-6px) }
+  100%{ transform: translateY(0) }
+}
+
+/* Badge circular con pulso leve */
+.current .badge{
+  position: relative;
+}
+.current .badge::after{
+  content:""; position:absolute; inset:-6px; border-radius:50%;
+  background: radial-gradient(circle, rgba(255,255,255,.18), transparent 60%);
+  filter: blur(6px); opacity:.6;
+  animation: pulse 2.8s ease-in-out infinite;
+}
+@keyframes pulse{
+  0%,100%{ transform: scale(1); opacity:.45 }
+  50%{ transform: scale(1.06); opacity:.75 }
+}
+
+/* En light theme, suavizamos los colores del glow */
+:root[data-theme="light"] .card:hover,
+:root[data-theme="light"] .panel:hover{
+  box-shadow: 0 10px 26px rgba(0,0,0,.16);
+}
+
+/* Respeto a usuarios que prefieren menos movimiento */
+@media (prefers-reduced-motion: reduce){
+  .card, .panel, .btn, .theme-toggle, .unit-toggle, .search-bar button,
+  .hour, .day, .cities .city, .current img, .current .badge::after, .day .bar{
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+/* limpiar estilos del badge si quedaron */
+.current .badge,
+.current .badge::after { display: none !important; }
+
+
+

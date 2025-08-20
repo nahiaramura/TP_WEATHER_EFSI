@@ -1,7 +1,8 @@
 // src/App.jsx
 import "./index.css";
-import useWeather, { fetchByGeolocation } from "./hooks/useWeather";
+import useWeather from "./hooks/useWeather";
 import { useWeatherCtx } from "./context/WeatherContext";
+
 import SearchBar from "./components/SearchBar";
 import UnitToggle from "./components/UnitToggle";
 import ThemeToggle from "./components/ThemeToggle";
@@ -11,50 +12,62 @@ import DailyForecast from "./components/DailyForecast";
 import CitySummary from "./components/CitySummary";
 
 export default function App() {
-  const { unit, setCity, setCoords } = useWeatherCtx();
+  const { unit, theme, setTheme } = useWeatherCtx();
   const { loading, err, current, forecast } = useWeather();
+  const tz = forecast?.city?.timezone ?? 0;
 
   return (
     <div className="app">
-      <header className="topbar">
+      {/* Topbar */}
+      <header className="toolbar">
         <h1>Weather App</h1>
-        <div className="controls">
-          <div className="unit-toggle"><UnitToggle /></div>
-          <button className="theme-toggle"
-            onClick={() =>
-              document.documentElement.dataset.theme === "dark"
-                ? (document.documentElement.dataset.theme = "light")
-                : (document.documentElement.dataset.theme = "dark")
-            }
+        <div className="toolbar-right">
+          <UnitToggle />
+          <button
+            className="theme-toggle"
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
           >
-            Modo {document.documentElement.dataset.theme === "dark" ? "claro" : "oscuro"}
+            Modo {theme === "dark" ? "claro" : "oscuro"}
           </button>
         </div>
       </header>
 
-      {/* buscador y acciones */}
-      <div className="search-bar">
+      {/* Búsqueda */}
+      <div className="search-row">
         <SearchBar />
-
       </div>
 
-      {/* NUEVO ORDEN: izquierda = 3 bloques / derecha = 5 días */}
-      <div className="layout">
-        <main className="main">
+      {/* Disposición por áreas (sin .card externas) */}
+      <main className="grid-areas">
+        <section className="area-current">
           {loading && <div className="card">Cargando…</div>}
-          {err && <div className="card">Error: {err}</div>}
-          {current && <CurrentWeather data={current} unit={unit} />}
-          {forecast && <HourlyForecast list={forecast.list} unit={unit} tz={forecast.city.timezone || 0} />}
-          {/* MOVIDO AQUÍ para rellenar la izquierda */}
-          <CitySummary />
-        </main>
+          {err && <div className="card" style={{ color: "#ff8a8a" }}>Error: {err}</div>}
+          {!loading && current && <CurrentWeather data={current} unit={unit} />}
+        </section>
 
-        <aside className="sidebar">
+        <aside className="area-daily">
           {forecast && (
-            <DailyForecast list={forecast.list} unit={unit} tz={forecast.city.timezone || 0} />
+            <>
+              <h3>Próximos 5 días</h3>
+              <DailyForecast list={forecast.list} unit={unit} tz={tz} />
+            </>
           )}
         </aside>
-      </div>
+
+        <section className="area-hourly">
+          {forecast && (
+            <>
+              <h3>Próximas 24 horas</h3>
+              <HourlyForecast list={forecast.list} unit={unit} tz={tz} />
+            </>
+          )}
+        </section>
+
+        <section className="area-cities">
+          <h3>Otras ciudades</h3>
+          <CitySummary />
+        </section>
+      </main>
 
       <footer className="footer">DevChallenges • OpenWeatherMap</footer>
     </div>

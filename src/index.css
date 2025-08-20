@@ -644,3 +644,57 @@ body[data-refreshing="1"] .card::after{
 @keyframes sweep {
   to { transform: translateX(100%); }
 }
+
+/* ====== Nueva disposición por áreas ====== */
+.toolbar{
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom: 14px;
+}
+.toolbar-right{ display:flex; gap:10px; }
+
+.search-row{ margin: 8px 0 14px; }
+
+/* Grid responsive por áreas */
+.grid-areas{
+  display:grid;
+  gap: 16px;
+  grid-template-areas:
+    "current"
+    "daily"
+    "hourly"
+    "cities";
+  grid-template-columns: 1fr;
+}
+
+/* Áreas nombradas */
+.area-current{ grid-area: current; }
+.area-daily{ grid-area: daily; }
+.area-hourly{ grid-area: hourly; }
+.area-cities{ grid-area: cities; }
+
+/* ≥ 900px: 2 columnas */
+@media (min-width: 900px){
+  .grid-areas{
+    grid-template-columns: 1.15fr .95fr;
+    grid-template-areas:
+      "current  daily"
+      "hourly   daily"
+      "cities   cities";
+  }
+}
+
+/* ≥ 1280px: 3 columnas (daily fijo a la derecha) */
+@media (min-width: 1280px){
+  .grid-areas{
+    grid-template-columns: 1.05fr 1fr .9fr; /* izquierda, centro, derecha */
+    grid-template-areas:
+      "current current daily"
+      "hourly  hourly  daily"
+      "cities  cities  daily";
+  }
+  .area-daily{ position: sticky; top: 20px; align-self: start; } /* sidebar “pegado” */
+}
+
+/* Detalles visuales para la nueva compo */
+.area-current .current .temp{ font-size: 92px; }
+.area-daily h3, .area-hourly h3, .area-cities h3{ margin:0 0 10px; }

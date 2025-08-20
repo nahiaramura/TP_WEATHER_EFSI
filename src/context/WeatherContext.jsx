@@ -3,13 +3,17 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 const WeatherContext = createContext();
 
 export function WeatherProvider({ children }) {
-  // theme: 'light' | 'dark'
+
   const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "dark");
-  // unit: 'metric' (°C) | 'imperial' (°F)
+
   const [unit, setUnit] = useState(() => localStorage.getItem("unit") || "metric");
-  // selected city
-  const [city, setCity] = useState(() => localStorage.getItem("city") || "Helsinki");
-  // simple cache del último payload de clima { current, forecast, city, ts }
+
+  const [city, setCity] = useState(() => {
+    const raw = localStorage.getItem("city");
+    if (!raw) return "Helsinki";
+    try { return JSON.parse(raw); } catch { return raw; }
+  });
+
   const [cache, setCache] = useState(() => {
     const raw = localStorage.getItem("weather_cache");
     return raw ? JSON.parse(raw) : null;
@@ -21,7 +25,11 @@ export function WeatherProvider({ children }) {
   }, [theme]);
 
   useEffect(() => localStorage.setItem("unit", unit), [unit]);
-  useEffect(() => localStorage.setItem("city", city), [city]);
+
+  useEffect(() => {
+    localStorage.setItem("city", JSON.stringify(city));
+  }, [city]);
+
   useEffect(() => {
     if (cache) localStorage.setItem("weather_cache", JSON.stringify(cache));
   }, [cache]);

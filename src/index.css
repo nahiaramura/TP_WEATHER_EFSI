@@ -51,12 +51,19 @@ h1{font-size:36px; letter-spacing:.5px; margin:0; font-weight:700}
   transition: transform .08s ease, background .2s ease, border-color .2s ease;
 }
 .btn:hover, .search-bar button:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.18); }
-.btn-primary, .search-bar button:first-of-type{
+.btn-primary{
   background:
     radial-gradient(120% 100% at 20% 0%, rgba(255,255,255,.18), transparent 55%),
     linear-gradient(150deg, var(--accent), var(--accent-2));
   border-color: transparent; color:white;
 }
+.btn[aria-pressed="true"]{
+  background:
+    radial-gradient(120% 100% at 20% 0%, rgba(255,255,255,.18), transparent 55%),
+    linear-gradient(150deg, var(--accent), var(--accent-2));
+  border-color: transparent; color:white;
+}
+
 .unit-toggle{ display:flex; gap:8px; background:transparent }
 .unit-toggle .active{ filter: brightness(1.08) saturate(1.1); }
 
@@ -616,5 +623,24 @@ h1 {
 .current .badge,
 .current .badge::after { display: none !important; }
 
+.btn.is-loading { pointer-events: none; opacity: .9; }
+.spinner{
+  display:inline-block; width:14px; height:14px;
+  border:2px solid rgba(255,255,255,.35);
+  border-top-color:#fff; border-radius:50%;
+  animation: spin .7s linear infinite; vertical-align: -2px;
+}
+@keyframes spin { to { transform: rotate(360deg) } }
 
-
+body[data-refreshing="1"] .card{
+  position: relative; overflow: hidden;
+}
+body[data-refreshing="1"] .card::after{
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.08), transparent);
+  transform: translateX(-100%);
+  animation: sweep .6s ease forwards;
+}
+@keyframes sweep {
+  to { transform: translateX(100%); }
+}

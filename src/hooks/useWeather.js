@@ -2,8 +2,16 @@ import { useEffect, useState } from "react";
 import { useWeatherCtx } from "../context/WeatherContext";
 import {
   getCurrentByCity, getForecastByCity,
-  getCurrentByCoords
+  getCurrentByCoords, getForecastByCoords
 } from "../api/openweather";
+
+function makeKey(c) {
+  if (typeof c === "string") return `city:${c.toLowerCase()}`;
+  if (c?.lat != null && c?.lon != null) {
+    return `geo:${Number(c.lat).toFixed(3)},${Number(c.lon).toFixed(3)}`;
+  }
+  return "unknown";
+}
 
 export default function useWeather() {
   const { city, setCache, cache } = useWeatherCtx();
@@ -19,8 +27,9 @@ export default function useWeather() {
         setErr(null);
         setLoading(true);
 
-        // si hay cache reciente de esta city (5 min), usarlo
-        if (cache && cache.city?.toLowerCase() === city.toLowerCase() && Date.now() - cache.ts < 5*60*1000) {
+        const key = makeKey(city);
+
+        if (cache && cache.key === key && Date.now() - cache.ts < 5 * 60 * 1000) {
           if (!cancelled) {
             setCurrent(cache.current);
             setForecast(cache.forecast);
@@ -29,19 +38,32 @@ export default function useWeather() {
           return;
         }
 
-        const [c, f] = await Promise.all([
-          getCurrentByCity(city),
-          getForecastByCity(city),
-        ]);
+        let c, f;
+        if (typeof city === "string") {
+          [c, f] = await Promise.all([
+            getCurrentByCity(city),
+            getForecastByCity(city),
+          ]);
+        } else if (city?.lat != null && city?.lon != null) {
+          [c, f] = await Promise.all([
+            getCurrentByCoords(city.lat, city.lon),
+            getForecastByCoords(city.lat, city.lon),
+          ]);
+        } else {
+          throw new Error("Ciudad o coordenadas inválidas");
+        }
 
         if (!cancelled) {
           setCurrent(c);
           setForecast(f);
-          setCache({ city, current: c, forecast: f, ts: Date.now() });
+          setCache({ key, current: c, forecast: f, ts: Date.now() });
           setLoading(false);
         }
       } catch (e) {
-        if (!cancelled) { setErr(e.message || "Error"); setLoading(false); }
+        if (!cancelled) {
+          setErr(e?.message || "Error");
+          setLoading(false);
+        }
       }
     }
     run();
@@ -51,7 +73,6 @@ export default function useWeather() {
   return { loading, err, current, forecast };
 }
 
-// geolocalización (opcional)
 export async function fetchByGeolocation(setCity) {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) return reject("Geolocalización no soportada");
@@ -60,11 +81,12 @@ export async function fetchByGeolocation(setCity) {
         try {
           const { latitude, longitude } = pos.coords;
           const cur = await getCurrentByCoords(latitude, longitude);
-          setCity(cur.name);
-          resolve(cur.name);
+          const payload = { lat: latitude, lon: longitude, name: cur?.name };
+          setCity(payload);
+          resolve(payload);
         } catch (e) { reject(e); }
       },
-      (e) => reject(e.message || "No autorizado")
+      (e) => reject(e?.message || "No autorizado")
     );
   });
 }
